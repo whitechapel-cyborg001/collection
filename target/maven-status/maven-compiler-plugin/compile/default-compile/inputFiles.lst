@@ -1,0 +1,16 @@
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/CollectionApplication.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/controllers/AuthorController.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/controllers/ComicController.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/controllers/PublisherController.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/entities/Author.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/entities/Comic.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/entities/Publisher.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/repositories/AuthorRepository.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/repositories/ComicRepository.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/repositories/PublisherRepository.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/services/AuthorService.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/services/AuthorServiceManager.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/services/ComicService.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/services/ComicServiceManager.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/services/PublisherService.java
+/home/whitechapel/Documentos/Prog/collection/src/main/java/net/vys/collection/services/PublisherServiceManager.java

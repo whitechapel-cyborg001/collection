@@ -1,0 +1,16 @@
+net/vys/collection/controllers/PublisherController.class
+net/vys/collection/services/PublisherServiceManager.class
+net/vys/collection/repositories/ComicRepository.class
+net/vys/collection/repositories/PublisherRepository.class
+net/vys/collection/services/AuthorService.class
+net/vys/collection/services/AuthorServiceManager.class
+net/vys/collection/services/ComicServiceManager.class
+net/vys/collection/repositories/AuthorRepository.class
+net/vys/collection/services/ComicService.class
+net/vys/collection/controllers/ComicController.class
+net/vys/collection/services/PublisherService.class
+net/vys/collection/CollectionApplication.class
+net/vys/collection/controllers/AuthorController.class
+net/vys/collection/entities/Comic.class
+net/vys/collection/entities/Author.class
+net/vys/collection/entities/Publisher.class

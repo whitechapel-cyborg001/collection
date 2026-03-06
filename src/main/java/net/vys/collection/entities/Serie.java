@@ -3,11 +3,9 @@ package net.vys.collection.entities;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-import net.vys.collection.entities.Publisher;
 
 @Entity
 @Table(name = "series")
@@ -16,16 +14,15 @@ public class Serie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Publisher publisher;
-    private int issues; // Number of comics in the series
+    private Integer issues; // Number of comics in the series
 
 
     public Serie() {
     }
 
-    public Serie(String name, Publisher publisher) {
+    public Serie(String name, Integer issues) {
         this.name = name;
-        this.publisher = publisher;
+        this.issues = issues;
     }
 
     public Long getId() {
@@ -44,19 +41,11 @@ public class Serie {
         this.name = name;
     }
 
-    public Publisher getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
-    }
-
-    public int getIssues() {
+    public Integer getIssues() {
         return issues;
     }
 
-    public void setIssues(int issues) {
+    public void setIssues(Integer issues) {
         this.issues = issues;
     }
 }

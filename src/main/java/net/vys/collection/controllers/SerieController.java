@@ -17,6 +17,7 @@ import java.util.List;
 public class SerieController {
     @Autowired
     private SerieServiceManager serviceManager;
+    
     @GetMapping
     public List<Serie> findAll() {
         return this.serviceManager.findAll();

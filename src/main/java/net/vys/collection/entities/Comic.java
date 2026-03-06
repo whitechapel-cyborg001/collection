@@ -5,7 +5,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import java.util.List;
@@ -26,9 +25,9 @@ public class Comic {
     private List<Author> authors;
     @ManyToOne
     private Publisher publisher;
-    private int publicationYear;
+    private Integer publicationYear;
     private String notes;
-    private int issue;
+    private Integer issue;
     @ManyToOne
     private Serie serie;
 
@@ -37,7 +36,7 @@ public class Comic {
     public Comic() {
     }
 
-    public Comic(String title, List<Author> authors, Publisher publisher, int publicationYear, int issue, Serie serie) {
+    public Comic(String title, List<Author> authors, Publisher publisher, Integer publicationYear, Integer issue, Serie serie) {
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
@@ -94,11 +93,11 @@ public class Comic {
         this.notes = notes;
     }
 
-    public int getIssue() {
+    public Integer getIssue() {
         return issue;
     }
 
-    public void setIssue(int issue) {
+    public void setIssue(Integer issue) {
         this.issue = issue;
     }
 

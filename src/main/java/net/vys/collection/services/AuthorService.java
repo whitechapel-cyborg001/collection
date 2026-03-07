@@ -1,10 +1,12 @@
 package net.vys.collection.services;
 
-import net.vys.collection.entities.Author;
+//import net.vys.collection.entities.Author;
+import net.vys.collection.dto.AuthorDTO;
+import net.vys.collection.dto.AuthorResponseDTO;
 import java.util.List;
 
 public interface AuthorService {
-    List<Author> findAll();
-    Author findById(Long id);
-    Author save(Author author);
+    List<AuthorResponseDTO> findAll();
+    AuthorResponseDTO findById(Long id);
+    AuthorResponseDTO save(AuthorDTO authorDTO);
 }

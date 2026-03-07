@@ -5,12 +5,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import net.vys.collection.entities.Author;
+//import net.vys.collection.entities.Author;
 
 import net.vys.collection.services.AuthorServiceManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import net.vys.collection.dto.AuthorDTO;
+import net .vys.collection.dto.AuthorResponseDTO;
+import jakarta.validation.Valid;
 
 
 
@@ -21,13 +25,13 @@ public class AuthorController {
     private AuthorServiceManager serviceManager;
 
     @GetMapping
-    public List<Author> findAll() {
+    public List<AuthorResponseDTO> findAll() {
         return this.serviceManager.findAll();
     }
 
     @PostMapping
-    public Author save(@RequestBody Author author) {
-        return this.serviceManager.save(author);
+    public AuthorResponseDTO save(@Valid @RequestBody AuthorDTO authorDTO) {
+        return this.serviceManager.save(authorDTO);
     }
     
 }

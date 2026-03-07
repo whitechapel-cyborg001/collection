@@ -1,11 +1,12 @@
 package net.vys.collection.services;
 
-import net.vys.collection.entities.Serie;
+import net.vys.collection.dto.SerieDTO;
+import net.vys.collection.dto.SerieResponseDTO;
 
 import java.util.List;
 
 public interface SerieService {
-    List<Serie> findAll();
-    Serie findById(Long id);
-    Serie save(Serie serie);
+    List<SerieResponseDTO> findAll();
+    SerieResponseDTO findById(Long id);
+    SerieResponseDTO save(SerieDTO serie);
 }

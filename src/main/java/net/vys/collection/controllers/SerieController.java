@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.vys.collection.entities.Serie;
+import net.vys.collection.dto.SerieDTO;
+import net.vys.collection.dto.SerieResponseDTO;
 import net.vys.collection.services.SerieServiceManager;
 
 import java.util.List;
@@ -19,12 +20,12 @@ public class SerieController {
     private SerieServiceManager serviceManager;
     
     @GetMapping
-    public List<Serie> findAll() {
+    public List<SerieResponseDTO> findAll() {
         return this.serviceManager.findAll();
     }
 
     @PostMapping
-    public Serie save(@RequestBody Serie serie) {
+    public SerieResponseDTO save(@RequestBody SerieDTO serie) {
         return this.serviceManager.save(serie);
     }
 

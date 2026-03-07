@@ -1,6 +1,5 @@
 package net.vys.collection.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import net.vys.collection.entities.Publisher;
@@ -13,8 +12,10 @@ import java.util.List;
 @Service
 public class PublisherServiceManager implements PublisherService {
 
-    @Autowired
-    private PublisherRepository repository;
+    private final PublisherRepository repository;
+    public PublisherServiceManager(PublisherRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<PublisherResponseDTO> findAll() {

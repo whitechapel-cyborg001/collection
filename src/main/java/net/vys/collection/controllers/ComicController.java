@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import net.vys.collection.dto.ComicDTO;
+import net.vys.collection.dto.ComicResponseDTO;
 
 
 @RestController
@@ -24,12 +25,12 @@ public class ComicController {
     private ComicServiceManager serviceManager;
 
     @GetMapping
-    public List<Comic> findAllComics() {
+    public List<ComicResponseDTO> findAllComics() {
         return this.serviceManager.findAll();
     }
 
     @PostMapping
-    public Comic saveComic(@Valid @RequestBody ComicDTO comic) {
+    public ComicResponseDTO saveComic(@Valid @RequestBody ComicDTO comic) {
         return this.serviceManager.save(comic);
     }
     

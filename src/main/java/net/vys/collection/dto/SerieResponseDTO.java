@@ -1,13 +1,14 @@
 package net.vys.collection.dto;
 
-public class PublisherResponseDTO {
+public class SerieResponseDTO {
     private Long id;
     private String name;
+    private Integer issues;
 
-
-    public PublisherResponseDTO(Long id, String name) {
+    public SerieResponseDTO(Long id, String name, Integer issues) {
         this.id = id;
         this.name = name;
+        this.issues = issues;
     }
 
     public Long getId() {
@@ -16,5 +17,9 @@ public class PublisherResponseDTO {
 
     public String getName() {
         return name;
+    }
+
+    public Integer getIssues() {
+        return issues;
     }
 }

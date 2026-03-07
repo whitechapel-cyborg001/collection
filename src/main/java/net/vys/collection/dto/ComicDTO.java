@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotNull;
 
 public class ComicDTO {
 
-    @NotBlank
+    @NotBlank(message = "Comic name cannot be empty")
     private String title;
-    @NotNull
+    @NotNull(message = "Authors cannot be null")
     private List<Long> authorsIDs;
-    @NotNull
+    @NotNull(message = "Publisher cannot be null")
     private Long publisherID;
     private Integer publicationYear;
     private String notes;

@@ -77,11 +77,11 @@ public class Comic {
         this.publisher = publisher;
     }
 
-    public int getPublicationYear() {
+    public Integer getPublicationYear() {
         return publicationYear;
     }
 
-    public void setPublicationYear(int publicationYear) {
+    public void setPublicationYear(Integer publicationYear) {
         this.publicationYear = publicationYear;
     }
 

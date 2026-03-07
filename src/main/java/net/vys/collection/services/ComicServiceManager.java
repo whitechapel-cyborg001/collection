@@ -1,83 +1,163 @@
 package net.vys.collection.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import net.vys.collection.repositories.ComicRepository;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.StreamSupport;
 
 import net.vys.collection.entities.Author;
 import net.vys.collection.entities.Comic;
+import net.vys.collection.entities.Publisher;
+import net.vys.collection.entities.Serie;
+
+import net.vys.collection.dto.AuthorResponseDTO;
 import net.vys.collection.dto.ComicDTO;
+import net.vys.collection.dto.ComicResponseDTO;
+import net.vys.collection.dto.PublisherResponseDTO;
+import net.vys.collection.dto.SerieDTO;
+import net.vys.collection.dto.SerieResponseDTO;
+import net.vys.collection.repositories.AuthorRepository;
+import net.vys.collection.repositories.ComicRepository;
 import net.vys.collection.repositories.PublisherRepository;
 import net.vys.collection.repositories.SerieRepository;
-import net.vys.collection.repositories.AuthorRepository;
+
+import java.util.List;
+import java.util.stream.StreamSupport;
 
 
 @Service
 public class ComicServiceManager implements ComicService {
 
-    @Autowired
-    private ComicRepository comicRepository;
+    private final ComicRepository comicRepository;
+    private final AuthorRepository authorRepository;
+    private final PublisherRepository publisherRepository;
+    private final SerieRepository serieRepository;
 
-    @Autowired
-    private AuthorRepository authorRepository;
+    public ComicServiceManager(
+            ComicRepository comicRepository,
+            AuthorRepository authorRepository,
+            PublisherRepository publisherRepository,
+            SerieRepository serieRepository) {
 
-    @Autowired
-    private PublisherRepository publisherRepository;
-
-    @Autowired
-    private SerieRepository serieRepository;
-
-    @Override
-    public List<Comic> findAll() {
-        return (List<Comic>) this.comicRepository.findAll();
+        this.comicRepository = comicRepository;
+        this.authorRepository = authorRepository;
+        this.publisherRepository = publisherRepository;
+        this.serieRepository = serieRepository;
     }
 
     @Override
-    public Comic findById(Long id) {
-        return this.comicRepository.findById(id).orElse(null);
+    public List<ComicResponseDTO> findAll() {
+
+        return comicRepository.findAll()
+            .stream()
+            .map(c -> new ComicResponseDTO(
+                c.getId(),
+                c.getTitle(),
+                c.getAuthors()
+                    .stream()
+                    .map(a -> new AuthorResponseDTO(a.getId(), a.getName()))
+                    .toList(),
+                c.getPublisher() != null
+                    ? new PublisherResponseDTO(
+                        c.getPublisher().getId(),
+                        c.getPublisher().getName()
+                    )
+                    : null,
+                c.getPublicationYear(),
+                c.getNotes(),
+                c.getIssue(),
+                c.getSerie() != null
+                    ? new SerieResponseDTO(
+                        c.getSerie().getId(),
+                        c.getSerie().getName(),
+                        c.getSerie().getIssues()
+                    )
+                    : null
+            ))
+            .toList();
     }
 
-    /* @Override
-    public Comic save(Comic comic) {
-        return this.comicRepository.save(comic);
-    }   */
+    @Override
+    public ComicResponseDTO findById(Long id) {
+
+        return comicRepository.findById(id)
+            .map(c -> new ComicResponseDTO(
+                c.getId(),
+                c.getTitle(),
+                c.getAuthors()
+                    .stream()
+                    .map(a -> new AuthorResponseDTO(a.getId(), a.getName()))
+                    .toList(),
+                c.getPublisher() != null
+                    ? new PublisherResponseDTO(
+                        c.getPublisher().getId(),
+                        c.getPublisher().getName()
+                    )
+                    : null,
+                c.getPublicationYear(),
+                c.getNotes(),
+                c.getIssue(),
+                c.getSerie() != null
+                    ? new SerieResponseDTO(
+                        c.getSerie().getId(),
+                        c.getSerie().getName(),
+                        c.getSerie().getIssues()
+                    )
+                    : null
+            ))
+            .orElse(null);
+    }
 
     @Override
-    public Comic save(ComicDTO dto) {
+    public ComicResponseDTO save(ComicDTO comicDTO) {
 
         Comic comic = new Comic();
 
-        comic.setTitle(dto.getTitle());
-        comic.setNotes(dto.getNotes());
-        comic.setIssue(dto.getIssueNumber());
-        comic.setPublicationYear(dto.getPublicationYear());
+        comic.setTitle(comicDTO.getTitle());
+        comic.setNotes(comicDTO.getNotes());
+        comic.setIssue(comicDTO.getIssueNumber());
+        comic.setPublicationYear(comicDTO.getPublicationYear());
 
-        comic.setPublisher(
-            publisherRepository.findById(dto.getPublisherID()).orElse(null)
-        );
+        Publisher publisher = publisherRepository
+            .findById(comicDTO.getPublisherID())
+            .orElse(null);
 
-        comic.setSerie(
-            serieRepository.findById(dto.getSerieId()).orElse(null)
-        );
+        Serie serie = serieRepository
+            .findById(comicDTO.getSerieId())
+            .orElse(null);
 
-        List<Author> authors =
-            StreamSupport
-            .stream(authorRepository.findAllById(dto.getAuthorsIDs()).spliterator(), false)
+        comic.setPublisher(publisher);
+        comic.setSerie(serie);
+
+        List<Author> authors = StreamSupport
+            .stream(authorRepository.findAllById(comicDTO.getAuthorsIDs()).spliterator(), false)
             .toList();
 
         comic.setAuthors(authors);
 
-        return comicRepository.save(comic);
+        Comic saved = comicRepository.save(comic);
+
+        return new ComicResponseDTO(
+            saved.getId(),
+            saved.getTitle(),
+            saved.getAuthors()
+                .stream()
+                .map(a -> new AuthorResponseDTO(a.getId(), a.getName()))
+                .toList(),
+            saved.getPublisher() != null
+                ? new PublisherResponseDTO(
+                    saved.getPublisher().getId(),
+                    saved.getPublisher().getName()
+                )
+                : null,
+            saved.getPublicationYear(),
+            saved.getNotes(),
+            saved.getIssue(),
+            saved.getSerie() != null
+                ? new SerieResponseDTO(
+                    saved.getSerie().getId(),
+                    saved.getSerie().getName(),
+                    saved.getSerie().getIssues()
+                )
+                : null
+        );
     }
-
-    @Override
-    public List<Comic> findByAuthor(Long authorId) {
-
-    // TODO : findByAuthor
-        return null;
-    }
-
 
 }

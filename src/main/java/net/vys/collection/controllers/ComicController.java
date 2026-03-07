@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.validation.Valid;
 import net.vys.collection.entities.Comic;
 
 import net.vys.collection.services.ComicServiceManager;
@@ -27,7 +29,7 @@ public class ComicController {
     }
 
     @PostMapping
-    public Comic saveComic(@RequestBody ComicDTO comic) {
+    public Comic saveComic(@Valid @RequestBody ComicDTO comic) {
         return this.serviceManager.save(comic);
     }
     

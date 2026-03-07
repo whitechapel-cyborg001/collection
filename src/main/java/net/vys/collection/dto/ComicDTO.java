@@ -1,10 +1,16 @@
 package net.vys.collection.dto;
 import java.util.List;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class ComicDTO {
 
+    @NotBlank
     private String title;
+    @NotNull
     private List<Long> authorsIDs;
+    @NotNull
     private Long publisherID;
     private Integer publicationYear;
     private String notes;

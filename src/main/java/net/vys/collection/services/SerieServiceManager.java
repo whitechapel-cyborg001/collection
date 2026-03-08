@@ -4,6 +4,7 @@ import net.vys.collection.dto.SerieResponseDTO;
 import net.vys.collection.dto.SerieDTO;
 import net.vys.collection.entities.Serie;
 import net.vys.collection.repositories.SerieRepository;
+import net.vys.collection.mapper.SerieMapper;
 
 import java.util.List;
 
@@ -13,19 +14,17 @@ import org.springframework.stereotype.Service;
 public class SerieServiceManager implements SerieService {
 
     private final SerieRepository repository;
-    public SerieServiceManager(SerieRepository repository) {
+    private final SerieMapper mapper;
+    public SerieServiceManager(SerieRepository repository, SerieMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     @Override
     public List<SerieResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .map(s -> new SerieResponseDTO(
-                        s.getId(),
-                        s.getName(),
-                        s.getIssues()
-                ))
+                .map(mapper::toSerieResponseDTO)
                 .toList();
     }
 
@@ -37,26 +36,17 @@ public class SerieServiceManager implements SerieService {
             return null;
         }
 
-        return new SerieResponseDTO(
-                serie.getId(),
-                serie.getName(),
-                serie.getIssues()
-        );
+        return mapper.toSerieResponseDTO(serie);
     }
 
     @Override
     public SerieResponseDTO save(SerieDTO serieDTO) {
         Serie serie = new Serie();
-        serie.setName(serieDTO.getName());
-        serie.setIssues(serieDTO.getIssues());
+        serie = mapper.toSerie(serieDTO);
 
         Serie saved = this.repository.save(serie);
 
-        return new SerieResponseDTO(
-                saved.getId(),
-                saved.getName(),
-                saved.getIssues()
-        );
+        return mapper.toSerieResponseDTO(saved);
     }
     
 }

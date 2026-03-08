@@ -1,9 +1,9 @@
 package net.vys.collection.dto;
 
 public class SerieResponseDTO {
-    private Long id;
-    private String name;
-    private Integer issues;
+    private final Long id;
+    private final String name;
+    private final Integer issues;
 
     public SerieResponseDTO(Long id, String name, Integer issues) {
         this.id = id;

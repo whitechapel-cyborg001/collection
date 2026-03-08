@@ -9,33 +9,26 @@ public class ComicResponseDTO {
     private PublisherResponseDTO publisher;
     private Integer publicationYear;
     private String notes;
-    private Integer issueNumber;
+    private Integer issue;
     private SerieResponseDTO serie;
 
-    public ComicResponseDTO(Long id, String title, List<AuthorResponseDTO> authors, PublisherResponseDTO publisher, Integer publicationYear, String notes, Integer issueNumber, SerieResponseDTO serie) {
+    public ComicResponseDTO(Long id, String title, List<AuthorResponseDTO> authors, PublisherResponseDTO publisher, Integer publicationYear, String notes, Integer issue, SerieResponseDTO serie) {
         this.id = id;
         this.title = title;
         this.authors = authors;
         this.publisher = publisher;
         this.publicationYear = publicationYear;
         this.notes = notes;
-        this.issueNumber = issueNumber;
+        this.issue = issue;
         this.serie = serie;
     }
 
     public Long getId() {return id;}
-
     public String getTitle() {return title;}
-
     public List<AuthorResponseDTO> getAuthors() {return authors;}
-
     public PublisherResponseDTO getPublisher() {return publisher;}
-
     public Integer getPublicationYear() {return publicationYear;}
-
     public String getNotes() {return notes;}
-
-    public Integer getIssueNumber() {return issueNumber;}
-
+    public Integer getIssue() {return issue;}
     public SerieResponseDTO getSerie() {return serie;} 
 }

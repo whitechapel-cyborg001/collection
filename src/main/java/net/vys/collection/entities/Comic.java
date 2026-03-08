@@ -12,8 +12,6 @@ import net.vys.collection.entities.Author;
 import net.vys.collection.entities.Publisher;
 import net.vys.collection.entities.Serie;
 
-
-
 @Entity
 @Table(name = "comics")
 public class Comic {
@@ -45,67 +43,20 @@ public class Comic {
         this.serie = serie;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public List<Author> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(List<Author> authors) {
-        this.authors = authors;
-    }
-
-    public Publisher getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
-    }
-
-    public Integer getPublicationYear() {
-        return publicationYear;
-    }
-
-    public void setPublicationYear(Integer publicationYear) {
-        this.publicationYear = publicationYear;
-    }
-
-    public String getNotes() {
-        return notes;
-    }  
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
-    public Integer getIssue() {
-        return issue;
-    }
-
-    public void setIssue(Integer issue) {
-        this.issue = issue;
-    }
-
-    public Serie getSerie() {
-        return serie;
-    }
-
-    public void setSerie(Serie serie) {
-        this.serie = serie;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) {this.id = id;}
+    public String getTitle() {return title; }
+    public void setTitle(String title) { this.title = title;}
+    public List<Author> getAuthors() {return authors;}
+    public void setAuthors(List<Author> authors) {this.authors = authors;}
+    public Publisher getPublisher() {return publisher;}
+    public void setPublisher(Publisher publisher) {this.publisher = publisher;}
+    public Integer getPublicationYear() {return publicationYear;}
+    public void setPublicationYear(Integer publicationYear) {this.publicationYear = publicationYear;}
+    public String getNotes() {return notes;}  
+    public void setNotes(String notes) {this.notes = notes;}
+    public Integer getIssue() {return issue;}
+    public void setIssue(Integer issue) {this.issue = issue;}
+    public Serie getSerie() {return serie;}
+    public void setSerie(Serie serie) {this.serie = serie;}
 }

@@ -17,6 +17,7 @@ import net.vys.collection.repositories.AuthorRepository;
 import net.vys.collection.repositories.ComicRepository;
 import net.vys.collection.repositories.PublisherRepository;
 import net.vys.collection.repositories.SerieRepository;
+import net.vys.collection.mapper.ComicMapper;
 
 import java.util.List;
 import java.util.stream.StreamSupport;
@@ -29,135 +30,63 @@ public class ComicServiceManager implements ComicService {
     private final AuthorRepository authorRepository;
     private final PublisherRepository publisherRepository;
     private final SerieRepository serieRepository;
+    private final ComicMapper mapper;
+
 
     public ComicServiceManager(
             ComicRepository comicRepository,
             AuthorRepository authorRepository,
             PublisherRepository publisherRepository,
-            SerieRepository serieRepository) {
+            SerieRepository serieRepository,
+            ComicMapper mapper) {
 
         this.comicRepository = comicRepository;
         this.authorRepository = authorRepository;
         this.publisherRepository = publisherRepository;
         this.serieRepository = serieRepository;
+        this.mapper = mapper;
     }
 
     @Override
     public List<ComicResponseDTO> findAll() {
-
         return comicRepository.findAll()
             .stream()
-            .map(c -> new ComicResponseDTO(
-                c.getId(),
-                c.getTitle(),
-                c.getAuthors()
-                    .stream()
-                    .map(a -> new AuthorResponseDTO(a.getId(), a.getName()))
-                    .toList(),
-                c.getPublisher() != null
-                    ? new PublisherResponseDTO(
-                        c.getPublisher().getId(),
-                        c.getPublisher().getName()
-                    )
-                    : null,
-                c.getPublicationYear(),
-                c.getNotes(),
-                c.getIssue(),
-                c.getSerie() != null
-                    ? new SerieResponseDTO(
-                        c.getSerie().getId(),
-                        c.getSerie().getName(),
-                        c.getSerie().getIssues()
-                    )
-                    : null
-            ))
+            .map(mapper::toComicResponseDTO)
             .toList();
     }
 
     @Override
     public ComicResponseDTO findById(Long id) {
+        Comic comic = comicRepository.findById(id).orElse(null);
 
-        return comicRepository.findById(id)
-            .map(c -> new ComicResponseDTO(
-                c.getId(),
-                c.getTitle(),
-                c.getAuthors()
-                    .stream()
-                    .map(a -> new AuthorResponseDTO(a.getId(), a.getName()))
-                    .toList(),
-                c.getPublisher() != null
-                    ? new PublisherResponseDTO(
-                        c.getPublisher().getId(),
-                        c.getPublisher().getName()
-                    )
-                    : null,
-                c.getPublicationYear(),
-                c.getNotes(),
-                c.getIssue(),
-                c.getSerie() != null
-                    ? new SerieResponseDTO(
-                        c.getSerie().getId(),
-                        c.getSerie().getName(),
-                        c.getSerie().getIssues()
-                    )
-                    : null
-            ))
-            .orElse(null);
+        if (comic == null) {
+            return null;
+        }
+
+        return mapper.toComicResponseDTO(comic);
     }
 
     @Override
     public ComicResponseDTO save(ComicDTO comicDTO) {
-
+        /*System.out.println("publisherId: " + comicDTO.getPublisher()); // VERIFICACION DE LLEGADA DE DTO
+        System.out.println("serieId: "     + comicDTO.getSerie());
+        System.out.println("authorIds: "   + comicDTO.getAuthors()); */
         Comic comic = new Comic();
-
-        comic.setTitle(comicDTO.getTitle());
-        comic.setNotes(comicDTO.getNotes());
-        comic.setIssue(comicDTO.getIssueNumber());
-        comic.setPublicationYear(comicDTO.getPublicationYear());
-
-        Publisher publisher = publisherRepository
-            .findById(comicDTO.getPublisherID())
-            .orElse(null);
-
-        Serie serie = serieRepository
-            .findById(comicDTO.getSerieId())
-            .orElse(null);
-
+        comic = mapper.toComic(comicDTO);
+/*
+        // Resolver las relaciones manualmente desde los repositorios           // INNECESARIO CON MAPPER
+        Publisher publisher = publisherRepository.findById(comicDTO.getPublisher())
+                .orElseThrow(() -> new RuntimeException("Publisher not found"));
         comic.setPublisher(publisher);
+
+        Serie serie = serieRepository.findById(comicDTO.getSerie())
+                .orElseThrow(() -> new RuntimeException("Serie not found"));
         comic.setSerie(serie);
 
-        List<Author> authors = StreamSupport
-            .stream(authorRepository.findAllById(comicDTO.getAuthorsIDs()).spliterator(), false)
-            .toList();
-
-        comic.setAuthors(authors);
+        List<Author> authors = authorRepository.findAllById(comicDTO.getAuthors());
+        comic.setAuthors(authors);*/
 
         Comic saved = comicRepository.save(comic);
-
-        return new ComicResponseDTO(
-            saved.getId(),
-            saved.getTitle(),
-            saved.getAuthors()
-                .stream()
-                .map(a -> new AuthorResponseDTO(a.getId(), a.getName()))
-                .toList(),
-            saved.getPublisher() != null
-                ? new PublisherResponseDTO(
-                    saved.getPublisher().getId(),
-                    saved.getPublisher().getName()
-                )
-                : null,
-            saved.getPublicationYear(),
-            saved.getNotes(),
-            saved.getIssue(),
-            saved.getSerie() != null
-                ? new SerieResponseDTO(
-                    saved.getSerie().getId(),
-                    saved.getSerie().getName(),
-                    saved.getSerie().getIssues()
-                )
-                : null
-        );
+        return mapper.toComicResponseDTO(saved);
     }
-
 }

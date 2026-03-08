@@ -6,6 +6,7 @@ import net.vys.collection.entities.Publisher;
 import net.vys.collection.dto.PublisherDTO;
 import net.vys.collection.dto.PublisherResponseDTO;
 import net.vys.collection.repositories.PublisherRepository;
+import net.vys.collection.mapper.PublisherMapper;
 
 import java.util.List;
 
@@ -13,18 +14,18 @@ import java.util.List;
 public class PublisherServiceManager implements PublisherService {
 
     private final PublisherRepository repository;
-    public PublisherServiceManager(PublisherRepository repository) {
+    private final PublisherMapper mapper;
+
+    public PublisherServiceManager(PublisherRepository repository, PublisherMapper mapper) {
         this.repository = repository;
+        this.mapper = mapper;
     }
 
     @Override
     public List<PublisherResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .map(p -> new PublisherResponseDTO(
-                        p.getId(),
-                        p.getName()
-                ))
+                .map(mapper::toPublisherResponseDTO)
                 .toList();
     }
 
@@ -36,22 +37,15 @@ public class PublisherServiceManager implements PublisherService {
             return null;
         }
 
-        return new PublisherResponseDTO(
-                publisher.getId(),
-                publisher.getName()
-        );
+        return mapper.toPublisherResponseDTO(publisher);
     }
 
     @Override
     public PublisherResponseDTO save(PublisherDTO publisherDTO) {
         Publisher publisher = new Publisher();
-        publisher.setName(publisherDTO.getName());
-
+        publisher = mapper.toPublisher(publisherDTO);
         Publisher saved = repository.save(publisher);
 
-        return new PublisherResponseDTO(
-                saved.getId(),
-                saved.getName()
-        );
+        return mapper.toPublisherResponseDTO(saved);
     }
 }

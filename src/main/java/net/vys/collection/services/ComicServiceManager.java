@@ -1,26 +1,23 @@
 package net.vys.collection.services;
 
-import org.springframework.stereotype.Service;
-
+import net.vys.collection.dto.ComicDTO;
+import net.vys.collection.dto.ComicResponseDTO;
 import net.vys.collection.entities.Author;
 import net.vys.collection.entities.Comic;
 import net.vys.collection.entities.Publisher;
 import net.vys.collection.entities.Serie;
-
-import net.vys.collection.dto.AuthorResponseDTO;
-import net.vys.collection.dto.ComicDTO;
-import net.vys.collection.dto.ComicResponseDTO;
-import net.vys.collection.dto.PublisherResponseDTO;
-import net.vys.collection.dto.SerieDTO;
-import net.vys.collection.dto.SerieResponseDTO;
+import net.vys.collection.exceptions.AuthorNotFoundException;
+import net.vys.collection.exceptions.ComicNotFoundException;
+import net.vys.collection.exceptions.PublisherNotFoundException;
+import net.vys.collection.exceptions.SerieNotFoundException;
+import net.vys.collection.mapper.ComicMapper;
 import net.vys.collection.repositories.AuthorRepository;
 import net.vys.collection.repositories.ComicRepository;
 import net.vys.collection.repositories.PublisherRepository;
 import net.vys.collection.repositories.SerieRepository;
-import net.vys.collection.mapper.ComicMapper;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
+import org.springframework.stereotype.Service;
 
 
 @Service
@@ -57,36 +54,38 @@ public class ComicServiceManager implements ComicService {
 
     @Override
     public ComicResponseDTO findById(Long id) {
-        Comic comic = comicRepository.findById(id).orElse(null);
-
-        if (comic == null) {
-            return null;
-        }
-
-        return mapper.toComicResponseDTO(comic);
+        // Lanza ComicNotFoundException (404) si no existe
+        return comicRepository.findById(id)
+                .map(mapper::toComicResponseDTO)
+                .orElseThrow(() -> new ComicNotFoundException(id));
     }
 
     @Override
     public ComicResponseDTO save(ComicDTO comicDTO) {
-        /*System.out.println("publisherId: " + comicDTO.getPublisher()); // VERIFICACION DE LLEGADA DE DTO
-        System.out.println("serieId: "     + comicDTO.getSerie());
-        System.out.println("authorIds: "   + comicDTO.getAuthors()); */
-        Comic comic = new Comic();
-        comic = mapper.toComic(comicDTO);
-/*
-        // Resolver las relaciones manualmente desde los repositorios           // INNECESARIO CON MAPPER
+        // Validar que las relaciones existen ANTES de guardar
+        // Si algún ID no existe, lanza 404 con un mensaje claro en lugar de fallar silenciosamente
         Publisher publisher = publisherRepository.findById(comicDTO.getPublisher())
-                .orElseThrow(() -> new RuntimeException("Publisher not found"));
-        comic.setPublisher(publisher);
+                .orElseThrow(() -> new PublisherNotFoundException(comicDTO.getPublisher()));
 
         Serie serie = serieRepository.findById(comicDTO.getSerie())
-                .orElseThrow(() -> new RuntimeException("Serie not found"));
-        comic.setSerie(serie);
+                .orElseThrow(() -> new SerieNotFoundException(comicDTO.getSerie()));
 
         List<Author> authors = authorRepository.findAllById(comicDTO.getAuthors());
-        comic.setAuthors(authors);*/
+        if (authors.size() != comicDTO.getAuthors().size()) {
+            // Al menos uno de los authorIds enviados no existe
+            List<Long> foundIds = authors.stream().map(Author::getId).toList();
+            List<Long> missingIds = comicDTO.getAuthors().stream()
+                    .filter(id -> !foundIds.contains(id))
+                    .toList();
+            throw new AuthorNotFoundException(missingIds.get(0));
+        }
 
-        Comic saved = comicRepository.save(comic);
-        return mapper.toComicResponseDTO(saved);
+        // Mapper construye el Comic
+        Comic comic = mapper.toComic(comicDTO);
+        comic.setPublisher(publisher);
+        comic.setSerie(serie);
+        comic.setAuthors(authors);
+
+        return mapper.toComicResponseDTO(comicRepository.save(comic));
     }
 }

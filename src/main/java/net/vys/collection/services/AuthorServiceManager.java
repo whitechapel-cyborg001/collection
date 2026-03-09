@@ -7,6 +7,7 @@ import net.vys.collection.entities.Author;
 import net.vys.collection.repositories.AuthorRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import net.vys.collection.exceptions.AuthorNotFoundException;
 
 import net.vys.collection.mapper.AuthorMapper;
 
@@ -34,17 +35,12 @@ public class AuthorServiceManager implements AuthorService {
     public AuthorResponseDTO findById(Long id) {
         return repository.findById(id)
             .map(mapper::toAuthorResponseDTO)
-            .orElse(null);
+            .orElseThrow(() -> new AuthorNotFoundException(id));
     }
 
     @Override
     public AuthorResponseDTO save(AuthorDTO authorDTO) {
-        Author author = mapper.toAuthorFromDTO(authorDTO);
-        Author saved = repository.save(author);
-
-        return new AuthorResponseDTO(
-            saved.getId(),
-            saved.getName()
-        );
+        Author saved = repository.save(mapper.toAuthor(authorDTO));
+        return mapper.toAuthorResponseDTO(saved);
     }
 }

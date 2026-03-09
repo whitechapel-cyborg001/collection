@@ -3,6 +3,7 @@ package net.vys.collection.services;
 import net.vys.collection.dto.SerieResponseDTO;
 import net.vys.collection.dto.SerieDTO;
 import net.vys.collection.entities.Serie;
+import net.vys.collection.exceptions.SerieNotFoundException;
 import net.vys.collection.repositories.SerieRepository;
 import net.vys.collection.mapper.SerieMapper;
 
@@ -30,22 +31,14 @@ public class SerieServiceManager implements SerieService {
 
     @Override
     public SerieResponseDTO findById(Long id) {
-        Serie serie = this.repository.findById(id).orElse(null);
-
-        if (serie == null) {
-            return null;
-        }
-
-        return mapper.toSerieResponseDTO(serie);
+        return repository.findById(id)
+                .map(mapper::toSerieResponseDTO)
+                .orElseThrow(() -> new SerieNotFoundException(id));
     }
 
     @Override
     public SerieResponseDTO save(SerieDTO serieDTO) {
-        Serie serie = new Serie();
-        serie = mapper.toSerie(serieDTO);
-
-        Serie saved = this.repository.save(serie);
-
+        Serie saved = repository.save(mapper.toSerie(serieDTO));
         return mapper.toSerieResponseDTO(saved);
     }
     

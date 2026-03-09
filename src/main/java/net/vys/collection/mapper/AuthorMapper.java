@@ -11,7 +11,7 @@ public interface AuthorMapper {
 
     AuthorResponseDTO toAuthorResponseDTO(Author author);
     AuthorDTO toAuthorDTO(Author author);
-    Author toAuthorFromDTO(AuthorDTO authorDTO);
+    Author toAuthor(AuthorDTO authorDTO);
 
     // Conversión Author -> ID
     default Long map(Author author) {

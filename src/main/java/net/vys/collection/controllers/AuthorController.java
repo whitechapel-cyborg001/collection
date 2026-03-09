@@ -11,9 +11,11 @@ import net.vys.collection.services.AuthorServiceManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import net.vys.collection.dto.AuthorDTO;
 import net .vys.collection.dto.AuthorResponseDTO;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.Valid;
 
 
@@ -25,14 +27,21 @@ public class AuthorController {
     private AuthorServiceManager serviceManager;
 
     @GetMapping
+    @Transactional(readOnly = true)
     public List<AuthorResponseDTO> findAll() {
         return this.serviceManager.findAll();
     }
 
     @PostMapping
+    @Transactional
     public AuthorResponseDTO save(@Valid @RequestBody AuthorDTO authorDTO) {
         return this.serviceManager.save(authorDTO);
     }
     
+    @GetMapping("{id}")
+    @Transactional(readOnly = true)
+    public AuthorResponseDTO findById(@PathVariable Long id) {
+        return this.serviceManager.findById(id);
+    }
 }
 

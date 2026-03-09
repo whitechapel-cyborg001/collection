@@ -1,7 +1,12 @@
 package net.vys.collection.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Publisher response data transfer object")
 public class PublisherResponseDTO {
+    @Schema(description = "Publisher ID", example = "1")
     private Long id;
+    @Schema(description = "Publisher name", example = "DC Comics")
     private String name;
 
 

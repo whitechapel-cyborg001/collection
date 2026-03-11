@@ -88,4 +88,41 @@ public class ComicServiceManager implements ComicService {
 
         return mapper.toComicResponseDTO(comicRepository.save(comic));
     }
+
+    @Override
+    public ComicResponseDTO update(Long id, ComicDTO comicDTO) {
+        // Verificar que el cómic existe
+        Comic existing = comicRepository.findById(id)
+                .orElseThrow(() -> new ComicNotFoundException(id));
+        // Validar relaciones (similar a save)
+        Publisher publisher = publisherRepository.findById(comicDTO.getPublisher())
+                .orElseThrow(() -> new PublisherNotFoundException(comicDTO.getPublisher()));
+        Serie serie = serieRepository.findById(comicDTO.getSerie())
+                .orElseThrow(() -> new SerieNotFoundException(comicDTO.getSerie()));
+        List<Author> authors = authorRepository.findAllById(comicDTO.getAuthors());
+        if (authors.size() != comicDTO.getAuthors().size()) {
+            List<Long> foundIds = authors.stream().map(Author::getId).toList();
+            List<Long> missingIds = comicDTO.getAuthors().stream()
+                    .filter(aid -> !foundIds.contains(aid))
+                    .toList();
+            throw new AuthorNotFoundException(missingIds.get(0));
+        }
+        // Actualizar campos
+        existing.setTitle(comicDTO.getTitle());
+        existing.setPublisher(publisher);
+        existing.setSerie(serie);
+        existing.setAuthors(authors);
+        existing.setIssue(comicDTO.getIssue());
+        existing.setPublicationYear(comicDTO.getPublicationYear());
+        existing.setNotes(comicDTO.getNotes());
+        return mapper.toComicResponseDTO(comicRepository.save(existing));
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!comicRepository.existsById(id)) {
+            throw new ComicNotFoundException(id);
+        }
+        comicRepository.deleteById(id);
+    }
 }

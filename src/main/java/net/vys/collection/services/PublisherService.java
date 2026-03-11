@@ -9,4 +9,6 @@ public interface PublisherService {
     List<PublisherResponseDTO> findAll();
     PublisherResponseDTO findById(Long id);
     PublisherResponseDTO save(PublisherDTO publisher);
+    PublisherResponseDTO update(Long id, PublisherDTO publisher);
+    void delete(Long id);
 }

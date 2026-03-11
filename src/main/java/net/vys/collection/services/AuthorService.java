@@ -9,4 +9,6 @@ public interface AuthorService {
     List<AuthorResponseDTO> findAll();
     AuthorResponseDTO findById(Long id);
     AuthorResponseDTO save(AuthorDTO authorDTO);
+    AuthorResponseDTO update(Long id, AuthorDTO authorDTO);
+    void delete(Long id);
 }

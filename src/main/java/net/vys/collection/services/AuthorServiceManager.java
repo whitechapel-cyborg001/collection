@@ -43,4 +43,21 @@ public class AuthorServiceManager implements AuthorService {
         Author saved = repository.save(mapper.toAuthor(authorDTO));
         return mapper.toAuthorResponseDTO(saved);
     }
+
+    @Override
+    public AuthorResponseDTO update(Long id, AuthorDTO authorDTO) {
+        Author existing = repository.findById(id)
+            .orElseThrow(() -> new AuthorNotFoundException(id));
+        Author updated = mapper.toAuthor(authorDTO);
+        updated.setId(id);
+        return mapper.toAuthorResponseDTO(repository.save(updated));
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new AuthorNotFoundException(id);
+        }
+        repository.deleteById(id);
+    }
 }

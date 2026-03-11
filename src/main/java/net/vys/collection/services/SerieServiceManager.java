@@ -42,4 +42,20 @@ public class SerieServiceManager implements SerieService {
         return mapper.toSerieResponseDTO(saved);
     }
     
+    @Override
+    public SerieResponseDTO update(Long id, SerieDTO serieDTO) {
+        Serie existing = repository.findById(id)
+                .orElseThrow(() -> new SerieNotFoundException(id));
+        Serie updated = mapper.toSerie(serieDTO);
+        updated.setId(id);
+        return mapper.toSerieResponseDTO(repository.save(updated));
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new SerieNotFoundException(id);
+        }
+        repository.deleteById(id);
+    }
 }

@@ -42,4 +42,21 @@ public class PublisherServiceManager implements PublisherService {
         Publisher saved = repository.save(mapper.toPublisher(publisherDTO));
         return mapper.toPublisherResponseDTO(saved);
     }
+
+    @Override
+    public PublisherResponseDTO update(Long id, PublisherDTO publisherDTO) {
+        Publisher existing = repository.findById(id)
+                .orElseThrow(() -> new SerieNotFoundException(id));
+        Publisher updated = mapper.toPublisher(publisherDTO);
+        updated.setId(id);
+        return mapper.toPublisherResponseDTO(repository.save(updated));
+    }
+
+    @Override
+    public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new SerieNotFoundException(id);
+        }
+        repository.deleteById(id);
+    }
 }

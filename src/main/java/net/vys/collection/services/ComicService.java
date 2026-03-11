@@ -7,4 +7,6 @@ public interface ComicService {
     List<ComicResponseDTO> findAll();
     ComicResponseDTO findById(Long id);
     ComicResponseDTO save(ComicDTO comicDTO);
+    ComicResponseDTO update(Long id, ComicDTO comicDTO);
+    void delete(Long id);
 }

@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -87,5 +89,43 @@ public class AuthorController {
     public ResponseEntity<AuthorResponseDTO> findById(@PathVariable Long id) {
         AuthorResponseDTO author = serviceManager.findById(id);
         return ResponseEntity.ok(author);
+    }
+
+    // -----------------------------------------------------------------------
+    // PUT /api/authors/{id}
+    // -----------------------------------------------------------------------
+    @Operation(summary = "Actualiza un Author", description = "Retorna el Author actualizado")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Autor actualizado correctamente"),
+        @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "404", description = "Autor no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @PutMapping("/{id}")
+    @Transactional
+    public ResponseEntity<AuthorResponseDTO> update(@PathVariable Long id, @Valid @RequestBody AuthorDTO author) {
+        return ResponseEntity.ok(serviceManager.update(id, author));
+    }
+
+    // -----------------------------------------------------------------------
+    // DELETE /api/authors/{id}
+    //  devuelve 204 No Content — es el estándar REST: operación exitosa pero sin cuerpo de respuesta. Por eso ResponseEntity<Void>
+    // -----------------------------------------------------------------------
+    @Operation(summary = "Elimina un Author", description = "No retorna contenido")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Autor eliminado correctamente"),
+        @ApiResponse(responseCode = "404", description = "Autor no encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        @ApiResponse(responseCode = "500", description = "Error interno del servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        serviceManager.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

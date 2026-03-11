@@ -9,4 +9,6 @@ public interface SerieService {
     List<SerieResponseDTO> findAll();
     SerieResponseDTO findById(Long id);
     SerieResponseDTO save(SerieDTO serie);
+    SerieResponseDTO update(Long id, SerieDTO serie);
+    void delete(Long id);
 }

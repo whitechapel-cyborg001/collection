@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,10 @@ import net.vys.collection.dto.AuthorDTO;
 import net.vys.collection.dto.AuthorResponseDTO;
 import net.vys.collection.dto.ErrorResponse;
 import net.vys.collection.services.AuthorServiceManager;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 @RestController
 @RequestMapping("/api/authors")
@@ -48,9 +53,11 @@ public class AuthorController {
     })
     @GetMapping
     @Transactional(readOnly = true)
-    public ResponseEntity<List<AuthorResponseDTO>> findAll() {
-        List<AuthorResponseDTO> authors = serviceManager.findAll();
-        return ResponseEntity.ok(authors);
+    public ResponseEntity<Page<AuthorResponseDTO>> findAll(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(serviceManager.findAll(pageable));
     }
 
     // -----------------------------------------------------------------------

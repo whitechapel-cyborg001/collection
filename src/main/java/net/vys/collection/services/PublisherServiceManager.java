@@ -9,7 +9,8 @@ import net.vys.collection.dto.PublisherResponseDTO;
 import net.vys.collection.repositories.PublisherRepository;
 import net.vys.collection.mapper.PublisherMapper;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class PublisherServiceManager implements PublisherService {
@@ -23,11 +24,9 @@ public class PublisherServiceManager implements PublisherService {
     }
 
     @Override
-    public List<PublisherResponseDTO> findAll() {
-        return repository.findAll()
-                .stream()
-                .map(mapper::toPublisherResponseDTO)
-                .toList();
+    public Page<PublisherResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toPublisherResponseDTO);
     }
 
     @Override

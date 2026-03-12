@@ -5,11 +5,14 @@ import net.vys.collection.dto.AuthorDTO;
 import net.vys.collection.dto.AuthorResponseDTO;
 import net.vys.collection.entities.Author;
 import net.vys.collection.repositories.AuthorRepository;
+
 import org.springframework.stereotype.Service;
 import java.util.List;
 import net.vys.collection.exceptions.AuthorNotFoundException;
 
 import net.vys.collection.mapper.AuthorMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 @Service
@@ -24,11 +27,9 @@ public class AuthorServiceManager implements AuthorService {
     }
 
     @Override
-    public List<AuthorResponseDTO> findAll() {
-        return repository.findAll()
-            .stream()
-            .map(mapper::toAuthorResponseDTO)
-            .toList();
+    public Page<AuthorResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+            .map(mapper::toAuthorResponseDTO);
     }
 
     @Override

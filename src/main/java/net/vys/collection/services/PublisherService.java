@@ -3,10 +3,11 @@ package net.vys.collection.services;
 //import net.vys.collection.entities.Publisher;
 import net.vys.collection.dto.PublisherDTO;
 import net.vys.collection.dto.PublisherResponseDTO;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface PublisherService {
-    List<PublisherResponseDTO> findAll();
+    Page<PublisherResponseDTO> findAll(Pageable pageable);
     PublisherResponseDTO findById(Long id);
     PublisherResponseDTO save(PublisherDTO publisher);
     PublisherResponseDTO update(Long id, PublisherDTO publisher);

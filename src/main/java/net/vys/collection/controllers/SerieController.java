@@ -1,7 +1,5 @@
 package net.vys.collection.controllers;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +24,11 @@ import net.vys.collection.dto.SerieDTO;
 import net.vys.collection.dto.SerieResponseDTO;
 import net.vys.collection.services.SerieServiceManager;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+
 @RestController
 @RequestMapping("/api/series")
 @Tag(name = "Series", description = "Operaciones sobre series")
@@ -48,8 +51,11 @@ public class SerieController {
     })
     @GetMapping
     @Transactional(readOnly = true)
-    public ResponseEntity<List<SerieResponseDTO>> findAll() {
-        return ResponseEntity.ok(serviceManager.findAll());
+    public ResponseEntity<Page<SerieResponseDTO>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(serviceManager.findAll(pageable));
     }
 
     // -----------------------------------------------------------------------

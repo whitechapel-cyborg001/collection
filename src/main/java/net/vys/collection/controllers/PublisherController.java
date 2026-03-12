@@ -26,6 +26,12 @@ import net.vys.collection.dto.PublisherDTO;
 import net.vys.collection.dto.PublisherResponseDTO;
 import net.vys.collection.services.PublisherServiceManager;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 @RestController
 @RequestMapping("/api/publishers")
 @Tag(name = "Publishers", description = "Operaciones sobre editoriales")
@@ -48,8 +54,11 @@ public class PublisherController {
     })
     @GetMapping
     @Transactional(readOnly = true)
-    public ResponseEntity<List<PublisherResponseDTO>> findAll() {
-        return ResponseEntity.ok(serviceManager.findAll());
+    public ResponseEntity<Page<PublisherResponseDTO>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(serviceManager.findAll(pageable));
     }
 
     // -----------------------------------------------------------------------

@@ -7,7 +7,8 @@ import net.vys.collection.exceptions.SerieNotFoundException;
 import net.vys.collection.repositories.SerieRepository;
 import net.vys.collection.mapper.SerieMapper;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,9 @@ public class SerieServiceManager implements SerieService {
     }
 
     @Override
-    public List<SerieResponseDTO> findAll() {
-        return repository.findAll()
-                .stream()
-                .map(mapper::toSerieResponseDTO)
-                .toList();
+    public Page<SerieResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(mapper::toSerieResponseDTO);
     }
 
     @Override

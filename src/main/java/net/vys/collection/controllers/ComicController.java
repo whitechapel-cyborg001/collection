@@ -56,12 +56,13 @@ public class ComicController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
-    public ResponseEntity<Page<ComicResponseDTO>> getAllComics(
+    @Transactional(readOnly = true)
+    public ResponseEntity<Page<ComicResponseDTO>> findAll(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size) {
 
     Pageable pageable = PageRequest.of(page, size);
-    return ResponseEntity.ok(serviceManager.getAllComics(pageable));
+    return ResponseEntity.ok(serviceManager.findAll(pageable));
 }
 
 

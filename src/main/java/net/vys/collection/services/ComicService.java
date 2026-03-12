@@ -7,7 +7,7 @@ import net.vys.collection.dto.ComicResponseDTO;
 import net.vys.collection.dto.ComicDTO;
 
 public interface ComicService {
-    Page<ComicResponseDTO> getAllComics(Pageable pageable);
+    Page<ComicResponseDTO> findAll(Pageable pageable);
     ComicResponseDTO findById(Long id);
     ComicResponseDTO save(ComicDTO comicDTO);
     ComicResponseDTO update(Long id, ComicDTO comicDTO);

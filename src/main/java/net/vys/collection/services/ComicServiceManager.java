@@ -48,7 +48,7 @@ public class ComicServiceManager implements ComicService {
     }
 
     @Override
-    public Page<ComicResponseDTO> getAllComics(Pageable pageable) {
+    public Page<ComicResponseDTO> findAll(Pageable pageable) {
         return comicRepository.findAll(pageable)
             .map(mapper::toComicResponseDTO);
     }

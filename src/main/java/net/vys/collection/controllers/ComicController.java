@@ -1,6 +1,6 @@
 package net.vys.collection.controllers;
 
-import java.util.List;
+//import java.util.List;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ import net.vys.collection.dto.ErrorResponse;
 import net.vys.collection.services.ComicServiceManager;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+//import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 @RestController
@@ -58,13 +58,16 @@ public class ComicController {
     @GetMapping
     @Transactional(readOnly = true)
     public ResponseEntity<Page<ComicResponseDTO>> findAll(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(required = false) String title,
+            @RequestParam(required = false) Long authorId,
+            @RequestParam(required = false) Long serieId,
+            @RequestParam(required = false) Long publisherId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
 
     Pageable pageable = PageRequest.of(page, size);
-    return ResponseEntity.ok(serviceManager.findAll(pageable));
+    return ResponseEntity.ok(serviceManager.findAll(title, authorId, serieId, publisherId, pageable));
 }
-
 
     // -----------------------------------------------------------------------
     // POST /api/comics

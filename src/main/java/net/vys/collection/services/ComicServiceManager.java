@@ -15,12 +15,15 @@ import net.vys.collection.repositories.AuthorRepository;
 import net.vys.collection.repositories.ComicRepository;
 import net.vys.collection.repositories.PublisherRepository;
 import net.vys.collection.repositories.SerieRepository;
+import net.vys.collection.specifications.ComicSpecification;
 
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -48,12 +51,26 @@ public class ComicServiceManager implements ComicService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Page<ComicResponseDTO> findAll(String title, Long authorId, Long serieId, Long publisherId, Pageable pageable) {
+        Specification<Comic> spec = Specification
+            .where(ComicSpecification.hasTitle(title))
+            .and(ComicSpecification.hasAuthor(authorId))
+            .and(ComicSpecification.hasSerie(serieId))
+            .and(ComicSpecification.hasPublisher(publisherId));
+
+        return comicRepository.findAll(spec, pageable).map(mapper::toComicResponseDTO);
+    }
+
+    /*@Override
+    @Transactional(readOnly = true)
     public Page<ComicResponseDTO> findAll(Pageable pageable) {
         return comicRepository.findAll(pageable)
             .map(mapper::toComicResponseDTO);
-    }
+    }*/
 
     @Override
+    @Transactional(readOnly = true)
     public ComicResponseDTO findById(Long id) {
         // Lanza ComicNotFoundException (404) si no existe
         return comicRepository.findById(id)

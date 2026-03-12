@@ -17,6 +17,9 @@ import net.vys.collection.repositories.PublisherRepository;
 import net.vys.collection.repositories.SerieRepository;
 
 import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 
@@ -45,11 +48,9 @@ public class ComicServiceManager implements ComicService {
     }
 
     @Override
-    public List<ComicResponseDTO> findAll() {
-        return comicRepository.findAll()
-            .stream()
-            .map(mapper::toComicResponseDTO)
-            .toList();
+    public Page<ComicResponseDTO> getAllComics(Pageable pageable) {
+        return comicRepository.findAll(pageable)
+            .map(mapper::toComicResponseDTO);
     }
 
     @Override

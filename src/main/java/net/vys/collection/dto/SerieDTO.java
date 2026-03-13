@@ -2,6 +2,7 @@ package net.vys.collection.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 @Schema(description = "An Serie data transfer object")
 public class SerieDTO {
@@ -11,6 +12,7 @@ public class SerieDTO {
     @Schema(description = "Serie name", example = "Batman")
     private String name;
     @Schema(description = "Number of issues", example = "10")
+    @Positive(message = "Number of issues must be positive")
     private Integer issues;
 
     public SerieDTO() {}

@@ -62,13 +62,6 @@ public class ComicServiceManager implements ComicService {
         return comicRepository.findAll(spec, pageable).map(mapper::toComicResponseDTO);
     }
 
-    /*@Override
-    @Transactional(readOnly = true)
-    public Page<ComicResponseDTO> findAll(Pageable pageable) {
-        return comicRepository.findAll(pageable)
-            .map(mapper::toComicResponseDTO);
-    }*/
-
     @Override
     @Transactional(readOnly = true)
     public ComicResponseDTO findById(Long id) {

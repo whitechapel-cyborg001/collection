@@ -14,6 +14,7 @@
 package net.vys.collection.security;
 
 import net.vys.collection.entities.User;              // MODIFICAR: ruta a tu entidad User
+import net.vys.collection.exceptions.UsernameAlreadyExistsException;
 import net.vys.collection.repositories.UserRepository; // MODIFICAR: ruta a tu repositorio
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,10 @@ public class AuthService {
     // ═══════════════════════════════════════════════════════════
     public String register(AuthRequest request) {
 
+        // Lanza excepción si el username ya existe en la BD
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            throw new UsernameAlreadyExistsException(request.getUsername());
+        }
         // MODIFICAR: ajusta los parámetros del constructor de User
         // según los campos de tu entidad.
         // Si tienes email en vez de username, cámbialo aquí.

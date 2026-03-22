@@ -12,7 +12,6 @@
 
 package net.vys.collection.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +21,10 @@ import org.springframework.web.bind.annotation.*;
                                // en SecurityConfig como .requestMatchers("/api/auth/**").permitAll()
 public class AuthController {
 
-    // inyectamos el servicio que tiene la lógica real
-    @Autowired
-    private AuthService authService;
-
+    private final AuthService authService;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     // ═══════════════════════════════════════════════════════════
     // POST /api/auth/register

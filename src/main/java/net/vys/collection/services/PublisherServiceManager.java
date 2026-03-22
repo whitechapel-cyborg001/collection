@@ -3,7 +3,7 @@ package net.vys.collection.services;
 import org.springframework.stereotype.Service;
 
 import net.vys.collection.entities.Publisher;
-import net.vys.collection.exceptions.SerieNotFoundException;
+import net.vys.collection.exceptions.PublisherNotFoundException;
 import net.vys.collection.dto.PublisherDTO;
 import net.vys.collection.dto.PublisherResponseDTO;
 import net.vys.collection.repositories.PublisherRepository;
@@ -33,7 +33,7 @@ public class PublisherServiceManager implements PublisherService {
     public PublisherResponseDTO findById(Long id) {
         return repository.findById(id)
                 .map(mapper::toPublisherResponseDTO)
-                .orElseThrow(() -> new SerieNotFoundException(id));
+                .orElseThrow(() -> new PublisherNotFoundException(id));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class PublisherServiceManager implements PublisherService {
     @Override
     public PublisherResponseDTO update(Long id, PublisherDTO publisherDTO) {
         Publisher existing = repository.findById(id)
-                .orElseThrow(() -> new SerieNotFoundException(id));
+                .orElseThrow(() -> new PublisherNotFoundException(id));
         Publisher updated = mapper.toPublisher(publisherDTO);
         updated.setId(id);
         return mapper.toPublisherResponseDTO(repository.save(updated));
@@ -54,7 +54,7 @@ public class PublisherServiceManager implements PublisherService {
     @Override
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new SerieNotFoundException(id);
+            throw new PublisherNotFoundException(id);
         }
         repository.deleteById(id);
     }

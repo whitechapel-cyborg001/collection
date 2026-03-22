@@ -43,7 +43,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Estas rutas son públicas — cualquiera puede llamarlas sin token
                 // Son las de registro y login, donde precisamente se obtiene el token
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
                 // Cualquier otra ruta requiere estar autenticado (tener token válido)
                 .anyRequest().authenticated()

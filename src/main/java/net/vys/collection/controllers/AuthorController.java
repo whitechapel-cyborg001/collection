@@ -2,7 +2,6 @@ package net.vys.collection.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,7 +49,6 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
-    @Transactional(readOnly = true)
     public ResponseEntity<Page<AuthorResponseDTO>> findAll(
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "20") int size) {
@@ -70,7 +68,6 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
-    @Transactional
     public ResponseEntity<AuthorResponseDTO> save(@Valid @RequestBody AuthorDTO authorDTO) {
         AuthorResponseDTO created = serviceManager.save(authorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -90,7 +87,6 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("{id}")
-    @Transactional(readOnly = true)
     public ResponseEntity<AuthorResponseDTO> findById(@PathVariable Long id) {
         AuthorResponseDTO author = serviceManager.findById(id);
         return ResponseEntity.ok(author);
@@ -110,7 +106,6 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    @Transactional
     public ResponseEntity<AuthorResponseDTO> update(@PathVariable Long id, @Valid @RequestBody AuthorDTO author) {
         return ResponseEntity.ok(serviceManager.update(id, author));
     }
@@ -128,7 +123,6 @@ public class AuthorController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         serviceManager.delete(id);
         return ResponseEntity.noContent().build();

@@ -5,7 +5,6 @@ package net.vys.collection.controllers;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -56,7 +55,6 @@ public class ComicController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping
-    @Transactional(readOnly = true)
     public ResponseEntity<Page<ComicResponseDTO>> findAll(
             @RequestParam(required = false) String title,
             @RequestParam(required = false) Long authorId,
@@ -82,7 +80,6 @@ public class ComicController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PostMapping
-    @Transactional
     public ResponseEntity<ComicResponseDTO> saveComic(@Valid @RequestBody ComicDTO comic) {
         ComicResponseDTO created = serviceManager.save(comic);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
@@ -103,7 +100,6 @@ public class ComicController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @GetMapping("{id}")
-    @Transactional(readOnly = true)
     public ResponseEntity<ComicResponseDTO> findById(@PathVariable Long id) {
         ComicResponseDTO comic = serviceManager.findById(id);
         return ResponseEntity.ok(comic);
@@ -123,7 +119,6 @@ public class ComicController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @PutMapping("/{id}")
-    @Transactional
     public ResponseEntity<ComicResponseDTO> update(@PathVariable Long id, @Valid @RequestBody ComicDTO comic) {
         return ResponseEntity.ok(serviceManager.update(id, comic));
     }
@@ -141,7 +136,6 @@ public class ComicController {
             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     @DeleteMapping("/{id}")
-    @Transactional
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         serviceManager.delete(id);
         return ResponseEntity.noContent().build();

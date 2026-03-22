@@ -10,8 +10,11 @@ public class ComicSpecification {
     }
 
     public static Specification<Comic> hasAuthor(Long authorId) {
-        return (root, query, cb) ->
-            authorId == null ? null : cb.equal(root.join("authors").get("id"), authorId);
+        return (root, query, cb) ->{
+            if (authorId == null) return null;
+            query.distinct(true);
+            return cb.equal(root.join("authors").get("id"), authorId);
+        };
     }
 
     public static Specification<Comic> hasSerie(Long serieId) {

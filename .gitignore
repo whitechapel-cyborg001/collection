@@ -53,6 +53,7 @@ Thumbs.db
 application-local.yml
 application-dev.yml
 application-test.yml
+application-local.properties
 # =========================
 # Env files
 # =========================

@@ -3,7 +3,9 @@ package net.vys.collection.services;
 import net.vys.collection.entities.Comic;
 import net.vys.collection.entities.User;
 import net.vys.collection.entities.UserComic;
+import net.vys.collection.exceptions.ComicAlreadyInCollectionException;
 import net.vys.collection.exceptions.ComicNotFoundException;
+import net.vys.collection.exceptions.UserNotFoundException;
 import net.vys.collection.repositories.ComicRepository;
 import net.vys.collection.repositories.UserComicRepository;
 import net.vys.collection.repositories.UserRepository;
@@ -74,7 +76,7 @@ class UserComicServiceManagerTest {
     void addToCollection_shouldThrowRuntimeException_whenUserNotFound() {
         when(userRepository.findByUsername("noexiste")).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
+        assertThrows(UserNotFoundException.class,
                 () -> userComicService.addToCollection(1L, "noexiste"));
         verify(userComicRepository, never()).save(any());
     }
@@ -90,12 +92,12 @@ class UserComicServiceManagerTest {
     }
 
     @Test
-    void addToCollection_shouldThrowRuntimeException_whenAlreadyInCollection() {
+    void addToCollection_shouldThrowComicAlreadyInCollectionException_whenAlreadyInCollection() {
         when(userRepository.findByUsername("vyserad")).thenReturn(Optional.of(user));
         when(comicRepository.findById(1L)).thenReturn(Optional.of(comic));
         when(userComicRepository.existsByUserAndComicId(user, 1L)).thenReturn(true);
 
-        assertThrows(RuntimeException.class,
+        assertThrows(ComicAlreadyInCollectionException.class,
                 () -> userComicService.addToCollection(1L, "vyserad"));
         verify(userComicRepository, never()).save(any());
     }
@@ -115,20 +117,20 @@ class UserComicServiceManagerTest {
     }
 
     @Test
-    void removeFromCollection_shouldThrowRuntimeException_whenUserNotFound() {
+    void removeFromCollection_shouldThrowUserNotFoundException_whenUserNotFound() {
         when(userRepository.findByUsername("noexiste")).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
+        assertThrows(UserNotFoundException.class,
                 () -> userComicService.removeFromCollection(1L, "noexiste"));
         verify(userComicRepository, never()).delete(any());
     }
 
     @Test
-    void removeFromCollection_shouldThrowRuntimeException_whenComicNotInCollection() {
+    void removeFromCollection_shouldThrowComicNotFoundException_whenComicNotInCollection() {
         when(userRepository.findByUsername("vyserad")).thenReturn(Optional.of(user));
         when(userComicRepository.findByUserAndComicId(user, 1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
+        assertThrows(ComicNotFoundException.class,
                 () -> userComicService.removeFromCollection(1L, "vyserad"));
         verify(userComicRepository, never()).delete(any());
     }
@@ -161,10 +163,10 @@ class UserComicServiceManagerTest {
     }
 
     @Test
-    void getCollection_shouldThrowRuntimeException_whenUserNotFound() {
+    void getCollection_shouldThrowUserNotFoundException_whenUserNotFound() {
         when(userRepository.findByUsername("noexiste")).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
+        assertThrows(UserNotFoundException.class,
                 () -> userComicService.getCollection("noexiste"));
         verify(userComicRepository, never()).findByUser(any());
     }

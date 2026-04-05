@@ -1,5 +1,6 @@
 package net.vys.collection.controllers;
 
+import net.vys.collection.dto.UserComicResponseDTO;
 import net.vys.collection.entities.UserComic;
 import net.vys.collection.services.UserComicService;
 import org.springframework.http.ResponseEntity;
@@ -27,12 +28,11 @@ public class UserComicController {
         da directamente el usuario autenticado. De ahí sacas el username y se lo pasas al service.
     *********************************************************************/
     @PostMapping("/{comicId}")
-    public ResponseEntity<UserComic> addToCollection(
+    public ResponseEntity<UserComicResponseDTO> addToCollection(
             @PathVariable Long comicId,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        UserComic userComic = userComicService.addToCollection(comicId, userDetails.getUsername());
-        return ResponseEntity.ok(userComic);
+        return ResponseEntity.ok(userComicService.addToCollection(comicId, userDetails.getUsername()));
     }
 
     @DeleteMapping("/{comicId}")
@@ -45,10 +45,9 @@ public class UserComicController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserComic>> getCollection(
+    public ResponseEntity<List<UserComicResponseDTO>> getCollection(
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        List<UserComic> collection = userComicService.getCollection(userDetails.getUsername());
-        return ResponseEntity.ok(collection);
+        return ResponseEntity.ok(userComicService.getCollection(userDetails.getUsername()));
     }
 }

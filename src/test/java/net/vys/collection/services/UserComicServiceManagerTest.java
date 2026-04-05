@@ -1,11 +1,14 @@
 package net.vys.collection.services;
 
+import net.vys.collection.dto.ComicResponseDTO;
+import net.vys.collection.dto.UserComicResponseDTO;
 import net.vys.collection.entities.Comic;
 import net.vys.collection.entities.User;
 import net.vys.collection.entities.UserComic;
 import net.vys.collection.exceptions.ComicAlreadyInCollectionException;
 import net.vys.collection.exceptions.ComicNotFoundException;
 import net.vys.collection.exceptions.UserNotFoundException;
+import net.vys.collection.mapper.ComicMapper;
 import net.vys.collection.repositories.ComicRepository;
 import net.vys.collection.repositories.UserComicRepository;
 import net.vys.collection.repositories.UserRepository;
@@ -29,6 +32,7 @@ class UserComicServiceManagerTest {
     @Mock private UserComicRepository userComicRepository;
     @Mock private ComicRepository comicRepository;
     @Mock private UserRepository userRepository;
+    @Mock private ComicMapper comicMapper;
 
     @InjectMocks
     private UserComicServiceManager userComicService;
@@ -36,6 +40,7 @@ class UserComicServiceManagerTest {
     private User user;
     private Comic comic;
     private UserComic userComic;
+    private ComicResponseDTO comicResponseDTO;
 
     @BeforeEach
     void setUp() {
@@ -51,6 +56,8 @@ class UserComicServiceManagerTest {
         userComic = new UserComic();
         userComic.setUser(user);
         userComic.setComic(comic);
+
+        comicResponseDTO = new ComicResponseDTO(1L, "Batman #1", null, null, null, null, null, null);
     }
 
     // =====================
@@ -58,22 +65,23 @@ class UserComicServiceManagerTest {
     // =====================
 
     @Test
-    void addToCollection_shouldReturnUserComic_whenValid() {
+    void addToCollection_shouldReturnUserComicResponseDTO_whenValid() {
         when(userRepository.findByUsername("vyserad")).thenReturn(Optional.of(user));
         when(comicRepository.findById(1L)).thenReturn(Optional.of(comic));
         when(userComicRepository.existsByUserAndComicId(user, 1L)).thenReturn(false);
         when(userComicRepository.save(any(UserComic.class))).thenReturn(userComic);
+        when(comicMapper.toComicResponseDTO(comic)).thenReturn(comicResponseDTO);
 
-        UserComic result = userComicService.addToCollection(1L, "vyserad");
+        UserComicResponseDTO result = userComicService.addToCollection(1L, "vyserad");
 
         assertNotNull(result);
-        assertEquals("vyserad", result.getUser().getUsername());
         assertEquals("Batman #1", result.getComic().getTitle());
+        assertEquals(UserComic.CollectionStatus.OWNED, result.getStatus());
         verify(userComicRepository, times(1)).save(any(UserComic.class));
     }
 
     @Test
-    void addToCollection_shouldThrowRuntimeException_whenUserNotFound() {
+    void addToCollection_shouldThrowUserNotFoundException_whenUserNotFound() {
         when(userRepository.findByUsername("noexiste")).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class,
@@ -140,11 +148,12 @@ class UserComicServiceManagerTest {
     // =====================
 
     @Test
-    void getCollection_shouldReturnListOfUserComics_whenValid() {
+    void getCollection_shouldReturnListOfUserComicResponseDTOs_whenValid() {
         when(userRepository.findByUsername("vyserad")).thenReturn(Optional.of(user));
         when(userComicRepository.findByUser(user)).thenReturn(List.of(userComic));
+        when(comicMapper.toComicResponseDTO(comic)).thenReturn(comicResponseDTO);
 
-        List<UserComic> result = userComicService.getCollection("vyserad");
+        List<UserComicResponseDTO> result = userComicService.getCollection("vyserad");
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -156,7 +165,7 @@ class UserComicServiceManagerTest {
         when(userRepository.findByUsername("vyserad")).thenReturn(Optional.of(user));
         when(userComicRepository.findByUser(user)).thenReturn(List.of());
 
-        List<UserComic> result = userComicService.getCollection("vyserad");
+        List<UserComicResponseDTO> result = userComicService.getCollection("vyserad");
 
         assertNotNull(result);
         assertEquals(0, result.size());

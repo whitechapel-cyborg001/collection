@@ -5,6 +5,7 @@ import net.vys.collection.dto.UserComicResponseDTO;
 import net.vys.collection.entities.Comic;
 import net.vys.collection.entities.User;
 import net.vys.collection.entities.UserComic;
+import net.vys.collection.entities.UserComic.CollectionStatus;
 import net.vys.collection.exceptions.ComicAlreadyInCollectionException;
 import net.vys.collection.exceptions.ComicNotFoundException;
 import net.vys.collection.exceptions.UserNotFoundException;
@@ -40,6 +41,7 @@ class UserComicServiceManagerTest {
     private User user;
     private Comic comic;
     private UserComic userComic;
+    private UserComic userComicWanted;
     private ComicResponseDTO comicResponseDTO;
 
     @BeforeEach
@@ -56,6 +58,12 @@ class UserComicServiceManagerTest {
         userComic = new UserComic();
         userComic.setUser(user);
         userComic.setComic(comic);
+        userComic.setStatus(CollectionStatus.OWNED);
+
+        userComicWanted = new UserComic();
+        userComicWanted.setUser(user);
+        userComicWanted.setComic(comic);
+        userComicWanted.setStatus(CollectionStatus.WANTED);
 
         comicResponseDTO = new ComicResponseDTO(1L, "Batman #1", null, null, null, null, null, null);
     }
@@ -65,18 +73,33 @@ class UserComicServiceManagerTest {
     // =====================
 
     @Test
-    void addToCollection_shouldReturnUserComicResponseDTO_whenValid() {
+    void addToCollection_shouldReturnOwnedDTO_whenStatusIsOwned() {
         when(userRepository.findByUsername("vyserad")).thenReturn(Optional.of(user));
         when(comicRepository.findById(1L)).thenReturn(Optional.of(comic));
         when(userComicRepository.existsByUserAndComicId(user, 1L)).thenReturn(false);
         when(userComicRepository.save(any(UserComic.class))).thenReturn(userComic);
         when(comicMapper.toComicResponseDTO(comic)).thenReturn(comicResponseDTO);
 
-        UserComicResponseDTO result = userComicService.addToCollection(1L, "vyserad");
+        UserComicResponseDTO result = userComicService.addToCollection(1L, "vyserad", CollectionStatus.OWNED);
 
         assertNotNull(result);
         assertEquals("Batman #1", result.getComic().getTitle());
-        assertEquals(UserComic.CollectionStatus.OWNED, result.getStatus());
+        assertEquals(CollectionStatus.OWNED, result.getStatus());
+        verify(userComicRepository, times(1)).save(any(UserComic.class));
+    }
+
+    @Test
+    void addToCollection_shouldReturnWantedDTO_whenStatusIsWanted() {
+        when(userRepository.findByUsername("vyserad")).thenReturn(Optional.of(user));
+        when(comicRepository.findById(1L)).thenReturn(Optional.of(comic));
+        when(userComicRepository.existsByUserAndComicId(user, 1L)).thenReturn(false);
+        when(userComicRepository.save(any(UserComic.class))).thenReturn(userComicWanted);
+        when(comicMapper.toComicResponseDTO(comic)).thenReturn(comicResponseDTO);
+
+        UserComicResponseDTO result = userComicService.addToCollection(1L, "vyserad", CollectionStatus.WANTED);
+
+        assertNotNull(result);
+        assertEquals(CollectionStatus.WANTED, result.getStatus());
         verify(userComicRepository, times(1)).save(any(UserComic.class));
     }
 
@@ -85,7 +108,7 @@ class UserComicServiceManagerTest {
         when(userRepository.findByUsername("noexiste")).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class,
-                () -> userComicService.addToCollection(1L, "noexiste"));
+                () -> userComicService.addToCollection(1L, "noexiste", CollectionStatus.OWNED));
         verify(userComicRepository, never()).save(any());
     }
 
@@ -95,7 +118,7 @@ class UserComicServiceManagerTest {
         when(comicRepository.findById(99L)).thenReturn(Optional.empty());
 
         assertThrows(ComicNotFoundException.class,
-                () -> userComicService.addToCollection(99L, "vyserad"));
+                () -> userComicService.addToCollection(99L, "vyserad", CollectionStatus.OWNED));
         verify(userComicRepository, never()).save(any());
     }
 
@@ -106,7 +129,7 @@ class UserComicServiceManagerTest {
         when(userComicRepository.existsByUserAndComicId(user, 1L)).thenReturn(true);
 
         assertThrows(ComicAlreadyInCollectionException.class,
-                () -> userComicService.addToCollection(1L, "vyserad"));
+                () -> userComicService.addToCollection(1L, "vyserad", CollectionStatus.OWNED));
         verify(userComicRepository, never()).save(any());
     }
 

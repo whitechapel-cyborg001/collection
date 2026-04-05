@@ -1,15 +1,20 @@
 package net.vys.collection.services;
-
+ 
+import net.vys.collection.dto.UserComicResponseDTO;
 import net.vys.collection.entities.Comic;
 import net.vys.collection.entities.User;
 import net.vys.collection.entities.UserComic;
+import net.vys.collection.exceptions.ComicAlreadyInCollectionException;
 import net.vys.collection.exceptions.ComicNotFoundException;
 import net.vys.collection.exceptions.UserNotFoundException;
+import net.vys.collection.mapper.ComicMapper;
 import net.vys.collection.repositories.ComicRepository;
 import net.vys.collection.repositories.UserComicRepository;
 import net.vys.collection.repositories.UserRepository;
 import org.springframework.stereotype.Service;
-import net.vys.collection.exceptions.ComicAlreadyInCollectionException;
+import org.springframework.transaction.annotation.Transactional;
+ 
+import java.util.List;
 
 @Service
 public class UserComicServiceManager implements UserComicService {
@@ -17,17 +22,29 @@ public class UserComicServiceManager implements UserComicService {
     private final UserComicRepository userComicRepository;
     private final ComicRepository comicRepository;
     private final UserRepository userRepository;
+    private final ComicMapper comicMapper;
 
     public UserComicServiceManager(UserComicRepository userComicRepository,
                                    ComicRepository comicRepository,
-                                   UserRepository userRepository) {
+                                   UserRepository userRepository,
+                                   ComicMapper comicMapper) {
         this.userComicRepository = userComicRepository;
         this.comicRepository = comicRepository;
         this.userRepository = userRepository;
+        this.comicMapper = comicMapper;
+    }
+
+    private UserComicResponseDTO toDTO(UserComic userComic) {
+        return new UserComicResponseDTO(
+                userComic.getId(),
+                comicMapper.toComicResponseDTO(userComic.getComic()),
+                userComic.getStatus()
+        );
     }
 
     @Override
-    public UserComic addToCollection(Long comicId, String username) {
+    @Transactional
+    public UserComicResponseDTO addToCollection(Long comicId, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
@@ -42,10 +59,11 @@ public class UserComicServiceManager implements UserComicService {
         userComic.setUser(user);
         userComic.setComic(comic);
 
-        return userComicRepository.save(userComic);
+        return toDTO(userComicRepository.save(userComic));
     }
 
     @Override
+    @Transactional
     public void removeFromCollection(Long comicId, String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
@@ -57,10 +75,14 @@ public class UserComicServiceManager implements UserComicService {
     }
 
     @Override
-    public java.util.List<UserComic> getCollection(String username) {
+    @Transactional(readOnly = true)
+    public List<UserComicResponseDTO> getCollection(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
-        return userComicRepository.findByUser(user);
+        return userComicRepository.findByUser(user)
+            .stream()
+            .map(this::toDTO)
+            .toList();
     }
 }

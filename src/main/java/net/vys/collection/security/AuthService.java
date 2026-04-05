@@ -13,11 +13,9 @@
 
 package net.vys.collection.security;
 
-import net.vys.collection.entities.User;              // MODIFICAR: ruta a tu entidad User
+import net.vys.collection.entities.User;
 import net.vys.collection.exceptions.UsernameAlreadyExistsException;
-import net.vys.collection.repositories.UserRepository; // MODIFICAR: ruta a tu repositorio
-
-import org.springframework.beans.factory.annotation.Autowired;
+import net.vys.collection.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,23 +30,19 @@ public class AuthService {
     // el resto de inyecciones son estándar JWT
     // ─────────────────────────────────────────────────────────────
 
-    @Autowired
-    private UserRepository userRepository;          // MODIFICAR: tu repositorio de usuarios
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    // BCryptPasswordEncoder — definido como Bean en SecurityConfig
-    // Nunca guardes contraseñas en texto plano
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    // Definido como Bean en SecurityConfig
-    // Se encarga de verificar usuario+contraseña contra la BD
-
-    @Autowired
-    private JwtUtil jwtUtil;
-    // Tu clase de utilidad para generar y validar tokens JWT
-
+    private final UserRepository userRepository;                    // MODIFICAR: tu repositorio de usuarios
+    private final PasswordEncoder passwordEncoder;                  // BCryptPasswordEncoder — definido como Bean en SecurityConfig
+    private final AuthenticationManager authenticationManager;      // Definido como Bean en SecurityConfig - Se encarga de verificar usuario+contraseña contra la BD
+    private final JwtUtil jwtUtil;                                  // Tu clase de utilidad para generar y validar tokens JWT
+    public AuthService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       AuthenticationManager authenticationManager,
+                       JwtUtil jwtUtil) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.jwtUtil = jwtUtil;
+    }
 
     // ═══════════════════════════════════════════════════════════
     // REGISTRO — POST /api/auth/register

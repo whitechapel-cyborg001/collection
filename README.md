@@ -205,7 +205,7 @@ Authorization: Bearer <token>
 }
 ```
 
-Status values: `OWNED` or `WANTED`.
+The `status` field is required. Accepted values: `OWNED` or `WANTED`.
 
 ---
 

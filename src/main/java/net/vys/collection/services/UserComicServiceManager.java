@@ -4,6 +4,7 @@ import net.vys.collection.dto.UserComicResponseDTO;
 import net.vys.collection.entities.Comic;
 import net.vys.collection.entities.User;
 import net.vys.collection.entities.UserComic;
+import net.vys.collection.entities.UserComic.CollectionStatus;
 import net.vys.collection.exceptions.ComicAlreadyInCollectionException;
 import net.vys.collection.exceptions.ComicNotFoundException;
 import net.vys.collection.exceptions.UserNotFoundException;
@@ -44,7 +45,7 @@ public class UserComicServiceManager implements UserComicService {
 
     @Override
     @Transactional
-    public UserComicResponseDTO addToCollection(Long comicId, String username) {
+    public UserComicResponseDTO addToCollection(Long comicId, String username, CollectionStatus status) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
 
@@ -58,6 +59,7 @@ public class UserComicServiceManager implements UserComicService {
         UserComic userComic = new UserComic();
         userComic.setUser(user);
         userComic.setComic(comic);
+        userComic.setStatus(status);
 
         return toDTO(userComicRepository.save(userComic));
     }
